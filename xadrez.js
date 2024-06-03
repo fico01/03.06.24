@@ -277,6 +277,41 @@ function moverTorre(pecaAnalisada, elementoDestino) {
         console.error("Eita! Aconteceu alguma coisa que não deu certo finalizar as linhas de código para mover a torre. Veja o erro: ", e);
     }
 }
+function moverBispo(pecaAnalisada, elementoDestino, tabuleiro) {
+    console.clear();
+    let linhaQuadrantePecaAtual = pecaAnalisada.linha;
+    let colunaQuadrantePecaAtual = pecaAnalisada.coluna;
+    let numVetorColunaPeca = colunas.indexOf(colunaQuadrantePecaAtual);
+    let numVetorLinhaPeca = linhas.indexOf(linhaQuadrantePecaAtual);
+    console.log("numVetorColunaPeca: ", numVetorColunaPeca);
+    console.log("numVetorLinhaPeca: ", numVetorLinhaPeca);
+    let numVetorColunaQuadrante = colunas.indexOf(elementoDestino.dataset.column);
+    let numVetorLinhaQuadrante = linhas.indexOf(elementoDestino.dataset.line);
+    console.log("numVetorColunaQuadrante: ", numVetorColunaQuadrante);
+    console.log("numVetorLinhaQuadrante: ", numVetorLinhaQuadrante);
+    let permitirMovimento = false;
+
+    if ( // valida o movimento do bispo
+        Math.abs(numVetorColunaQuadrante - numVetorColunaPeca) === Math.abs(numVetorLinhaQuadrante - numVetorLinhaPeca)
+    ) {
+        // Verifica se há peças no caminho do bispo
+        let incrementoColuna = numVetorColunaQuadrante > numVetorColunaPeca ? 1 : -1;
+        let incrementoLinha = numVetorLinhaQuadrante > numVetorLinhaPeca ? 1 : -1;
+        let colunaAtual = numVetorColunaPeca + incrementoColuna;
+        let linhaAtual = numVetorLinhaPeca + incrementoLinha;
+        permitirMovimento = true;
+        while (colunaAtual !== numVetorColunaQuadrante && linhaAtual !== numVetorLinhaQuadrante) {
+            if (tabuleiro[linhas[linhaAtual]][colunas[colunaAtual]]) {
+                permitirMovimento = false;
+                break;
+            }
+            colunaAtual += incrementoColuna;
+            linhaAtual += incrementoLinha;
+        }
+    }
+
+    return permitirMovimento; //feito por Mateus e Aleciane
+}
 
 function moverCavalo(pecaAnalisada, elementoDestino) {
     /**
@@ -317,36 +352,35 @@ function moverCavalo(pecaAnalisada, elementoDestino) {
     } else if ( // valida o movimento do cavalo dois quadrantes para cima e um quadrante para direita
         numVetorColunaQuadrante == (numVetorColunaPeca + 1) &&
         numVetorLinhaQuadrante == (numVetorLinhaPeca - 2)
-) {
-    permitirMovimento = true;
-}
-     else if ( // valida o movimento do cavalo dois quadrantes para cima e um quadrante para direita
-    numVetorColunaQuadrante == (numVetorColunaPeca + 2) &&
+    ) {
+        permitirMovimento = true;
+    } else if ( // valida o movimento do cavalo dois quadrantes para cima e um quadrante para direita
+        numVetorColunaQuadrante == (numVetorColunaPeca + 2) &&
     numVetorLinhaQuadrante == (numVetorLinhaPeca + 1)
-) {
+    ) {
     permitirMovimento = true;
-}
-    else if ( // valida o movimento do cavalo dois quadrantes para cima e um quadrante para direita
+    } else if ( // valida o movimento do cavalo dois quadrantes para cima e um quadrante para direita
     numVetorColunaQuadrante == (numVetorColunaPeca + 1) &&
     numVetorLinhaQuadrante == (numVetorLinhaPeca + 2)
-) {
+    ) {
     permitirMovimento = true;
-} else if ( // valida o movimento do cavalo dois quadrantes para direita e um quadrante para cima
+    } else if ( // valida o movimento do cavalo dois quadrantes para direita e um quadrante para cima
     numVetorColunaQuadrante == (numVetorColunaPeca - 1) &&
     numVetorLinhaQuadrante == (numVetorLinhaPeca + 2)
-) {
+    ) {
     permitirMovimento = true;
-} else if ( // valida o movimento do cavalo dois quadrantes para direita e um quadrante para cima
+    } else if ( // valida o movimento do cavalo dois quadrantes para direita e um quadrante para cima
     numVetorColunaQuadrante == (numVetorColunaPeca - 2) &&
     numVetorLinhaQuadrante == (numVetorLinhaPeca + 1)
-) {
+    ) {
     permitirMovimento = true;
-}
+    }
     
     return permitirMovimento;
 
     
 }
+
 
 (function() { // execução em tempo real das linhas de código do bloco de função inominada
     document.onmousedown = handleMouseDown;
@@ -433,6 +467,9 @@ function moverCavalo(pecaAnalisada, elementoDestino) {
                                     break;
                                 case "cavalo":
                                     movimentoPermitido = moverCavalo(pecaAnalisada, elementoDestino);
+                                    break;
+                                case "bispo": 
+                                    movimentoPermitido = moverBispo(pecaAnalisada, elementoDestino);
                                     break;
                                 default:
                                     console.error("Peça selecionada não identificada!");
